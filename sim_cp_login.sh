@@ -49,7 +49,7 @@ fi
 # Log in with the cookie and ntok
 http_code=$(curl -k -b $cookie_file -w "%{http_code}" -d "target=&ntok=$ntok&static_u=&no_u=&no_p=&username=$USERNAME&F_password=0&password=$PASSWORD" "$URL" -s -S -o /dev/null)
 
-# Expecting a 302 redirect upon successful login - set RECV to 302 in config
+# Expecting a 302 redirect upon successful login
 if [[ $http_code -eq 302 ]]; then
     URI=/guest/auth_logout.php
     URL="${URL_PREFIX}${URI}"
