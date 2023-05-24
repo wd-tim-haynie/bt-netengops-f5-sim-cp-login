@@ -9,7 +9,10 @@ Now create a monitor object. On an LTM device, create an external monitor Local 
 
 For current version of the script, the username and password must be specified in the monitor with the variables USERNAME and PASSWORD (Name = USERNAME, Value = the test username, click Add, then Name = PASSWORD, Value = your test password, and click Add). On my tested versions, there is no need to encode special characters with URL encoding (for example '%21' for an exclamation mark '!' or '%40' for an at sign '@', etc.) but that could depend on your version of curl. Both were tested on my versions and both seem to work fine.
 
+Version 1.1:
 Also make sure that you are not using a sensitive username and password since this is being stored in cleartext in your configuration, display unobscured onscreen, and will be visible to F5 if you submit a qkview. My username and password are stored in the local user repository on ClearPass and it is only used for this specific purpose. You could choose to modify the script to store the username and password as an environment variable in your bash profile to make it slightly more hidden but I think this might still be visible to F5 in the qkview. I'm not aware of any way to encrypt the password nicely yet but I'll keep looking.
+
+Version 1.2: Password encryption has been added, plaintext password still supported. See password encryption section
 
 The script must be installed on all LTM pairs AND each GTM to work correctly. You can deploy/update the script on a single LTM in the pair and then sync to force the script to copy over to the other member. However, *you must manually install/update the script on each GTM* as this information does not sync like the rest of the GTM configurations.
 
@@ -24,3 +27,27 @@ On the ClearPass side, configure your guest operator login policy such that the 
 Tested on ClearPass 6.9.13 and BigIP 14.1.4.6.
 
 The ClearPass F5 Tech Note can be found here: https://www.arubanetworks.com/techdocs/ArubaDocPortal/content/cp-resources/cp-tech-notes.htm (Click the link for F5 Load Balancers)
+
+## Version 1.2
+
+Enhanced logging
+Added password encryption
+Fixed cleanup
+Improved PID management
+Improved error detection
+
+# Password Encryption
+
+First, generate a secure 32 random character (or longer) decryption key. Save this key into a text file temporarily. Import this file into your LTMs and GTMs as an iFile: System > File Management > iFile List.
+
+Choose your text file and name the file EXACTLY this name: sim_cp_login.key
+
+Make sure this is available on EVERY device - remember, GTMs don't sync this.
+
+Then run this command:
+
+echo 'your-password' | openssl enc -aes-256-cbc -base64 -k 'your-decryption-key'
+
+This is your encrypted password.
+
+Save the encrypted password as a variable in the monitor with the name ENCRYPTED_PASSWORD.
