@@ -30,11 +30,11 @@ The ClearPass F5 Tech Note can be found here: https://www.arubanetworks.com/tech
 
 ## Version 1.2
 
-Enhanced logging
-Added password encryption
-Fixed cleanup
-Improved PID management
-Improved error detection
+* Enhanced logging
+* Added password encryption
+* Fixed cleanup
+* Improved PID management
+* Improved error detection
 
 # Password Encryption
 
