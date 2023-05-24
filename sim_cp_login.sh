@@ -1,5 +1,5 @@
 #!/bin/bash
-# Version 1.2
+# Version 1.2.1
 
 # Note the start time
 START_TIME=$(date +%s%N)
@@ -17,13 +17,30 @@ IP=${1:7}  # This is fast but not applicable to IPv6 or for testing at CLI
 PORT=${2}  # The port number is the second argument
 
 # Enable or disable logging
-LOGGING=true # true or false to turn logging on/off
+#LOGGING=true # true or false to turn logging on/off
 # Logging level hierarchy (in order of severity)
 declare -A LOG_LEVELS=( ["debug"]=0 ["info"]=1 ["notice"]=2 ["warn"]=3 ["err"]=4 ["crit"]=5 ["alert"]=6 ["emerg"]=7 )
 # Minimum logging level
-MIN_LOG_LEVEL="err"
+#MIN_LOG_LEVEL="err"
 
 ALL_LOG_LEVELS=$(echo ${!LOG_LEVELS[@]})
+
+# If MIN_LOG_LEVEL is not set or is not a valid log level, default it to "warn"
+if [[ -z "${MIN_LOG_LEVEL}" || -z "${LOG_LEVELS[$MIN_LOG_LEVEL]}" ]]
+then
+    if [[ "$LOGGING" == "true" ]]
+    then
+        MIN_LOG_LEVEL="warn"
+        echo "Invalid MIN_LOG_LEVEL ${MIN_LOG_LEVEL} in $MON_TMPL_NAME, defaulting to warn" | logger -p local0.warn > /dev/null 2>&1
+
+    fi
+else
+    # If MIN_LOG_LEVEL is set to a valid value and LOGGING is null from environment, enable logging
+    if [[ -z "$LOGGING" ]]
+    then
+        LOGGING="true"
+    fi
+fi
 
 LOG_MESSAGE() {
     # Check if provided log level is valid
@@ -37,7 +54,7 @@ LOG_MESSAGE() {
         fi
     else
         # If the log level provided was invalid, log an error message
-        LOG_MESSAGE "Invalid log level provided: Message: $1 Level $2. Valid log levels are: ${ALL_LOG_LEVELS}" "err"
+        LOG_MESSAGE "Invalid log level provided: Monitor: $MON_TMPL_NAME Message: $1 Level $2. Valid log levels are: ${ALL_LOG_LEVELS}" "err"
     fi
 }
 
