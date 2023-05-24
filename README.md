@@ -44,10 +44,8 @@ Choose your text file and name the file EXACTLY this name: sim_cp_login.key
 
 Make sure this is available on EVERY device - remember, GTMs don't sync this.
 
-Then run this command:
+Then run this command to encrypt your password:
 
 echo 'your-password' | openssl enc -aes-256-cbc -base64 -k 'your-decryption-key'
-
-This is your encrypted password.
 
 Save the encrypted password as a variable in the monitor with the name ENCRYPTED_PASSWORD.
