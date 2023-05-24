@@ -12,7 +12,7 @@ For current version of the script, the username and password must be specified i
 Version 1.1:
 Also make sure that you are not using a sensitive username and password since this is being stored in cleartext in your configuration, display unobscured onscreen, and will be visible to F5 if you submit a qkview. My username and password are stored in the local user repository on ClearPass and it is only used for this specific purpose. You could choose to modify the script to store the username and password as an environment variable in your bash profile to make it slightly more hidden but I think this might still be visible to F5 in the qkview. I'm not aware of any way to encrypt the password nicely yet but I'll keep looking.
 
-Version 1.2: Password encryption has been added, plaintext password still supported. See password encryption section
+Version 1.2 and later: Password encryption has been added, plaintext password still supported. See password encryption section
 
 The script must be installed on all LTM pairs AND each GTM to work correctly. You can deploy/update the script on a single LTM in the pair and then sync to force the script to copy over to the other member. However, *you must manually install/update the script on each GTM* as this information does not sync like the rest of the GTM configurations.
 
@@ -36,7 +36,11 @@ The ClearPass F5 Tech Note can be found here: https://www.arubanetworks.com/tech
 * Improved PID management
 * Improved error detection
 
-# Password Encryption
+### Version 1.2.1
+
+Moved MIN_LOG_LEVEL and LOGGING variables configured by the monitor. Set LOGGING to "true" or specify a valid MIN_LOG_LEVEL (debug info notice warn err crit alert emerg) to enable logging. If LOGGING is true but invalid or null MIN_LOG_LEVEL is set, default to warn. If invalid MIN_LOG_LEVEL is set and LOGGING is not true, disable logging.
+
+## Password Encryption
 
 First, generate a secure 32 random character (or longer) decryption key. Save this key into a text file temporarily. Import this file into your LTMs and GTMs as an iFile: System > File Management > iFile List.
 
