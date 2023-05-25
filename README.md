@@ -39,7 +39,7 @@ The script frequently uses "> /dev/null 2>&1". This is to ensure that the monito
 
 The script checks for HTTP status code 302 intentionally, as an invalid username/password would return a status code 200 along with an error message, while a correct login would return a 302.
 
-On the ClearPass side, configure your guest operator login policy to map the test username to the default "Null Profile". This allows login but assigns no privileges. The test username/password can be configured in the local user database, or an external resource like AD if desired.
+On the ClearPass side, configure your guest operator login policy to map the test username to the default "Null Profile". This allows login but assigns no privileges. The test username/password can be configured in the local user database, or an external resource like Active Directory if desired.
 
 ## Version History
 
