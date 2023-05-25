@@ -21,7 +21,7 @@ PORT=${2}  # The port number is the second argument
 
 # Logging section
 # Logging level hierarchy (in order of severity)
-declare -A ALL_LOG_LEVELS=( ["debug"]=0 ["info"]=1 ["notice"]=2 ["warn"]=3 ["err"]=4 ["crit"]=5 ["alert"]=6 ["emerg"]=7 )
+declare -A ALL_LOG_LEVELS=( ["debug"]=0 ["info"]=1 ["notice"]=2 ["warning"]=3 ["err"]=4 ["crit"]=5 ["alert"]=6 ["emerg"]=7 )
 ALL_LOG_LEVELS_STR=$(echo ${!ALL_LOG_LEVELS[@]})
 
 LOG_MESSAGE() {
@@ -36,7 +36,7 @@ LOG_MESSAGE() {
         fi
     else
         # Log level is invalid, log a warning
-        LOG_MESSAGE "Invalid log level \"$2\" for provided log. Valid levels are: $ALL_LOG_LEVELS_STR. Message: $1" "warn"
+        LOG_MESSAGE "Invalid log level \"$2\" for provided log. Valid levels are: $ALL_LOG_LEVELS_STR. Message: $1" "warning"
     fi
 }
 
@@ -48,8 +48,8 @@ elif [[ -z "${ALL_LOG_LEVELS[$LOG_LEVEL]}" ]]
 then
     # LOG_LEVEL is either null or invalid, disable logging
     PROVIDED_LOG_LEVEL=${LOG_LEVEL}
-    LOG_LEVEL="warn"
-    LOG_MESSAGE "Invalid LOG_LEVEL \"$PROVIDED_LOG_LEVEL\", disabling additional logging" "warn"
+    LOG_LEVEL="warning"
+    LOG_MESSAGE "Invalid LOG_LEVEL \"$PROVIDED_LOG_LEVEL\", disabling additional logging" "warning"
     unset LOG_LEVEL
 fi
 
@@ -152,7 +152,7 @@ then
     # Warn if logout fails, but don't quit
     if ! [[ $HTTP_CODE -eq 302 ]]
     then
-        LOG_MESSAGE "Failed to logout" "warn"
+        LOG_MESSAGE "Failed to logout" "warning"
     fi
 
     END_TIME=$(date +%s%N)
