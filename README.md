@@ -14,11 +14,13 @@ To install or update the script on any F5 device:
 
 To create a monitor object:
 
-- On an LTM device, go to `Local Traffic > Monitors > Create`. Fill out the name and description, and select the external type.
-- On a GTM (BigIP DNS) device, go to `DNS > GSLB > Monitors > Create`. Fill out the name and description, and select the external type.
-- As a best practice, consider including a link to this GitHub repository in the description field of the monitor. This aids in future reference and updates, especially considering that the functionality of this script is not documented elsewhere.
+- On an LTM device, navigate to Local Traffic > Monitors > Create. Fill in the name and description, and select 'External' as the type.
+- On a GTM (BigIP DNS) device, navigate to DNS > GSLB > Monitors > Create. Fill in the name and description, and select 'External' as the type.
+- As a best practice, consider including a link to this GitHub repository in the description field of the monitor. This facilitates future reference and updates, particularly since the operational details of this script aren't documented elsewhere.
 
-After creating the monitor, add your USERNAME and PASSWORD. Initially, you can set these variables for a quick setup. Once the monitor is operational, it's recommended to use an encrypted password instead (see Password Encryption section).
+Now, add USERNAME and PASSWORD variables. In the Variables section of the monitor configuration, set USERNAME to your test username and click 'Add', then set PASSWORD to your test password and click 'Add' again. Initially, the plaintext PASSWORD variable can be set for a quick setup. However, once the monitor is operational, it's recommended to switch to an encrypted password (refer to the Password Encryption section).
+
+To finalize the configuration of your monitor object, click 'Finished'.
 
 ## Script Variables
 
