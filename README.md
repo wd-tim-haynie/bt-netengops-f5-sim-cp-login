@@ -77,7 +77,7 @@ The project has been tested on ClearPass 6.9.13 and BigIP 14.1.4.6.
 
 ## Disclaimer
 
-Please use this script responsibly. It is intended for testing and troubleshooting purposes only, and should not be used for unauthorized access to any systems.
+This script is provided for the purpose of testing and troubleshooting, and is intended to be used in a responsible manner. It is not designed for, and should not be used for, unauthorized access to any systems. While efforts have been made to ensure its accuracy and reliability, the author assumes no responsibility for any issues or complications that may arise from the use of this script within your environment. Users are advised to carefully evaluate the script's applicability to their specific needs and to take appropriate precautions in its usage.
 
 ## License
 
