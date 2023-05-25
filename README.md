@@ -1,4 +1,4 @@
-# wd-f5-sim-cp-login
+# f5-sim-cp-login
 Simulates login to ClearPass Guest with HTTPS from F5 external monitor shell script using curl
 
 The script loads the system default login page for the guest application, /guest/auth_login.php and performs a guest operator login and logout. This is a significantly better test that the stock https monitor that is recommended in the "Deploying CPPM with F5 BIG-IP Local Traffic Manager (LTM)" tech note, which hasn't been updated since 2014. The stock monitor is pretty good, but wouldn't be able to capture as many failure use cases. I've run into an instance in my environment where a single ClearPass node had corrupt versions of the Web Login pages, so the stock monitor was passing just fine even though it was actually broken. Even checking for a Receive String of 200 did not catch the problem as the page was still responding with this code.
