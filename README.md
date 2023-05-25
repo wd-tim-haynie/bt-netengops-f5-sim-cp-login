@@ -16,6 +16,7 @@ To create a monitor object:
 
 - On an LTM device, go to `Local Traffic > Monitors > Create`. Fill out the name and description, and select the external type.
 - On a GTM (BigIP DNS) device, go to `DNS > GSLB > Monitors > Create`. Fill out the name and description, and select the external type.
+- As a best practice, consider including a link to this GitHub repository in the description field of the monitor. This aids in future reference and updates, especially considering that the functionality of this script is not documented elsewhere.
 
 After creating the monitor, add your USERNAME and PASSWORD. Initially, you can set these variables for a quick setup. Once the monitor is operational, it's recommended to use an encrypted password instead (see Password Encryption section).
 
