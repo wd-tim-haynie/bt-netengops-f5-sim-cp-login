@@ -21,7 +21,7 @@ After creating the monitor, add your USERNAME and PASSWORD. Initially, you can s
 
 ## Script Variables
 
-The script uses the following variables:
+The script uses the following variables, which are set in the monitor object itself:
 
 - `USERNAME`: your monitor username
 - `PASSWORD`: plaintext password (should only be used for testing)
