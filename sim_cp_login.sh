@@ -61,12 +61,15 @@ then
 
     # Locate the key file. Use head to only take a single entry and discard any other matches.
     DECRYPTION_KEY_FILE_PATH=$(ls /config/filestore/files_d/Common_d/ifile_d/:Common:${DECRYPTION_KEY_FILE_NAME}_* 2> /dev/null | head -n 1)
+    LOG_MESSAGE "Decryption Key File Path: $DECRYPTION_KEY_FILE_PATH" "info"
 
     # Check to see if its not empty (-n) and a real file (-f)
     if [[ -n "$DECRYPTION_KEY_FILE_PATH" && -f "$DECRYPTION_KEY_FILE_PATH" ]]
     then
         # Read the first line of the decryption key file
         read -r DECRYPTION_KEY < "$DECRYPTION_KEY_FILE_PATH" 2> /dev/null
+        #LOG_MESSAGE "Decryption Key: $DECRYPTION_KEY" "debug"
+        #echo "Decryption Key: $DECRYPTION_KEY" >> /path/to/outputfile
 
         # Check to see if the key is empty
         if [[ -z "$DECRYPTION_KEY" ]]
@@ -81,6 +84,8 @@ then
 
     # Use openssl to decrypt the password
     PASSWORD=$(echo "$ENCRYPTED_PASSWORD" | openssl enc -aes-256-cbc -d -a -k "$DECRYPTION_KEY" 2> /dev/null)
+    #LOG_MESSAGE "Decrypted Password: $PASSWORD" "debug"
+    #echo "Decrypted Password: $PASSWORD" >> /path/to/outputfile
     
     # If there's a problem with openssl, then password will be blank.
     if [[ -z "$PASSWORD" ]]
@@ -94,7 +99,7 @@ fi
 COOKIE_FILE="/tmp/$(basename ${MON_TMPL_NAME})_${IP}_${PORT}_$$.cookie"
 PID_FILE="/var/run/$(basename ${MON_TMPL_NAME})_${IP}_${PORT}.pid"
 
-# Cleanup any previous cookie
+# Cleanup previous cookie if it exists
 rm -f "/tmp/$(basename ${MON_TMPL_NAME}).${IP}_${PORT}_$(cat "$PID_FILE").cookie" > /dev/null 2>&1
 
 # Cleanup function to ensure removal of temporary files on script exit
@@ -104,8 +109,7 @@ CLEANUP() {
 }
 
 # Setup trap to call cleanup function on script exit
-trap CLEANUP EXIT INT TERM ERR
-
+trap CLEANUP EXIT
 
 # Kill the last instance of this monitor if it is hung, and log the current PID
 if [ -f "$PID_FILE" ]
@@ -157,7 +161,7 @@ then
 
     END_TIME=$(date +%s%N)
     ELAPSED_TIME=$(awk "BEGIN {print ($END_TIME - $START_TIME) / 1000000}")
-    LOG_MESSAGE "Succeeded after $ELAPSED_TIME ms" "info"
+    LOG_MESSAGE "Succeeded after $ELAPSED_TIME ms" "notice"
 
     CLEANUP
     
