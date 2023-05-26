@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #sim-cp-login.sh
-#Version 1.3 May 25, 2023
+#Version 1.4 May 25, 2023
 #https://github.com/wd-tim-haynie/bt-netengops-f5-sim-cp-login
 #Author: Tim Haynie, CWNE #254, ACMX #508 https://www.linkedin.com/in/timhaynie/
 
@@ -146,6 +146,41 @@ fi
 CURL_DATA="target=&ntok=$NTOK&static_u=&no_u=&no_p=&username=$USERNAME&F_password=0&password=$PASSWORD"
 HTTP_CODE=$(curl -k -b "$COOKIE_FILE" -w "%{http_code}" -d $CURL_DATA "$URL" -s -S -o /dev/null)
 
+# A function to check any URIs passed as arguments from the monitor
+CHECK_URIS() {
+    # Loop through each argument provided
+    for URI in "$@"
+    do
+        # Define the URL
+        URL="${URL_PREFIX}${URI}"
+
+        # Run a curl command to the URI and save the HTTP code and body
+        CURL_OUTPUT=$(curl -k -b "$COOKIE_FILE" -i -s -S "$URL")
+
+        # Extract the HTTP status code and body
+        HTTP_CODE=$(echo "$CURL_OUTPUT" | grep HTTP | awk '{print $2}' | tail -n 1)
+        HTTP_BODY=$(echo "$CURL_OUTPUT" | awk '{x[NR]=$0} END{for (i=1; i<=NR-1; i++) print x[i]}' )
+        
+        # Debug logs
+        LOG_MESSAGE "Testing URI $URI" "debug"
+        LOG_MESSAGE "HTTP Status Code: $HTTP_CODE" "debug"
+
+        if [[ $HTTP_BODY == *"html"* ]]
+        then
+            LOG_MESSAGE "HTTP body contain html: True" "debug"
+        else
+            LOG_MESSAGE "HTTP body contains html: False" "debug"
+        fi
+
+        # Check if the HTTP code is not 200 or the body does not contain "html"
+        if [[ $HTTP_CODE -ne 200 || $HTTP_BODY != *"html"* ]]
+        then
+            LOG_MESSAGE "Failed to validate URI $URI" "err"
+            exit 1
+        fi
+    done
+}
+
 # Expecting a 302 redirect upon successful login
 if [[ $HTTP_CODE -eq 302 ]]
 then
@@ -158,6 +193,9 @@ then
     then
         LOG_MESSAGE "Failed to logout" "warning"
     fi
+
+    # Call the new function to check URIs passed as arguments
+    CHECK_URIS "${@:3}"
 
     END_TIME=$(date +%s%N)
     ELAPSED_TIME=$(awk "BEGIN {print ($END_TIME - $START_TIME) / 1000000}")
