@@ -1,6 +1,8 @@
 # F5 ClearPass Guest Login Simulation
 
-The `f5-sim-cp-login` script serves as an F5 external monitor, specifically designed to simulate login and log out of the guest application's default login page located at `/guest/auth_login.php`. This simulation offers a more reliable alternative to the standard HTTPS monitor proposed in the "Deploying CPPM with F5 BIG-IP Local Traffic Manager (LTM)" guide, which hasn't been updated since 2014. By employing this script, you gain a robust method to monitor the status of the ClearPass Guest application, surpassing the capabilities of the BIG-IP's built-in HTTP/HTTPS monitor. Notably, it enables the detection of potential issues such as corrupted Web Login pages, which would otherwise pass the stock HTTP/HTTPS healthcheck monitor and even return an HTTP status code of 200 despite having a blank body, which can happen if the ClearPass Guest database somehow gets corrupt.
+The `f5-sim-cp-login` script serves as an F5 external monitor, specifically designed to simulate login and logout of the ClearPass Guest application's default login page located at `/guest/auth_login.php`. This simulation offers a more reliable alternative to the standard HTTPS monitor proposed in the "Deploying CPPM with F5 BIG-IP Local Traffic Manager (LTM)" guide, which hasn't been updated since 2014. By employing this script, you gain a robust method to monitor the status of the ClearPass Guest application, surpassing the capabilities of the BIG-IP's built-in HTTP/HTTPS monitor.
+
+Notably, it enables the detection of potential issues such as corrupted Web Login pages, which would otherwise pass the stock HTTP/HTTPS healthcheck monitor and even return an HTTP status code of 200 despite having a blank body. This can happen if the ClearPass Guest database somehow gets corrupt. Moreover, the script can also load and verify the status of any additional pages that you wish to monitor. This feature enhances the monitoring capabilities, ensuring not just the functionality of the login page, but also the accessibility and health of other critical pages in your application. 
 
 ## Installation and Update
 
@@ -21,6 +23,8 @@ Then, add USERNAME and PASSWORD variables. In the Variables section of the monit
 
 Finally, click 'Finished' to complete the configuration of your monitor object.
 
+The script must be installed on all LTM pairs AND each GTM for accurate functioning. For GTM devices, you must manually install or update the script as these changes don't sync like other GTM configurations.
+
 On the ClearPass side, configure your guest operator login policy to map the test username to the default "Null Profile". This allows login but assigns no privileges. The test username/password can be configured in the local user database, or an external resource like Active Directory if desired.
 
 ## Script Variables
@@ -35,7 +39,13 @@ The script uses the following variables, which are set in the monitor object its
 
 There is no need to encode special characters with URL encoding (e.g., '%21' for '!') on the tested versions. However, this could be version-dependent. 
 
-The script must be installed on all LTM pairs AND each GTM for accurate functioning. For GTM devices, you must manually install or update the script as these changes don't sync like other GTM configurations.
+## Script Arguments
+
+If you wish to monitor other pages on the ClearPass appliance, you can add their URIs as arguments in the monitor. For instance, you could effectively monitor the ClearPass admin server service (cpass-admin-server) by adding `/tips/welcome.action` as an argument. It's also best practice to monitor any critical pages involved in your captive portal login process. 
+
+For monitoring captive portal pages in the ClearPass Guest application, append the URI with `?_browser=1`. This query parameter simulates the behavior of a real browser. Failing to include it may result in a different status code than expected.
+
+For example, you could add `/tips/welcome.action /guest/mycaptiveportallanding.php?_browser=1` as arguments to the script, which will then monitor these two pages.
 
 ## Behavior and Error Detection
 
@@ -55,7 +65,6 @@ The script is designed to intentionally check for an HTTP status code 302. This 
 Only the first line of this file is read as the decryption key; all subsequent lines are disregarded. 
 
 It's essential to upload this iFile to EVERY device - remember, GTMs don't automatically sync this information. If you have LTMs that are part of a sync group, they will synchronize this iFile among themselves.
-
 
 ## Limitations
 
@@ -89,6 +98,7 @@ The project has been tested on ClearPass 6.9.13 and BigIP 14.1.4.6.
 
 ### Version History
 
+- **1.4**: Added the capability to monitor any page, using arguments passed from the monitor.
 - **1.3**: Simplified and improved logging, enhanced error handling, added the ability to specify any decryption key file, and fixed minor bugs.
 - **1.2.1**: Moved MIN_LOG_LEVEL and LOGGING variables to be configured by the monitor. Enabled logging by setting LOGGING to true or specifying a valid MIN_LOG_LEVEL.
 - **1.2**: Added password encryption and improved PID management, error detection, and cleanup.
