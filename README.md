@@ -23,6 +23,8 @@ Then, add USERNAME and PASSWORD variables. In the Variables section of the monit
 
 Finally, click 'Finished' to complete the configuration of your monitor object.
 
+On the ClearPass side, configure your guest operator login policy to map the test username to the default "Null Profile". This allows login but assigns no privileges. The test username/password can be configured in the local user database, or an external resource like Active Directory if desired.
+
 ## Script Variables
 
 The script uses the following variables, which are set in the monitor object itself:
@@ -41,9 +43,7 @@ The script must be installed on all LTM pairs AND each GTM for accurate function
 
 The script frequently uses "> /dev/null 2>&1". This is to ensure that the monitor only returns "UP" when the script completes fully. This is due to the behavior of the F5 external monitor, which considers the monitor successful if ANYTHING is output to STDOUT or STDERR.
 
-The script checks for HTTP status code 302 intentionally, as an invalid username/password would return a status code 200 along with an error message, while a correct login would return a 302.
-
-On the ClearPass side, configure your guest operator login policy to map the test username to the default "Null Profile". This allows login but assigns no privileges. The test username/password can be configured in the local user database, or an external resource like Active Directory if desired.
+The script is designed to intentionally check for an HTTP status code 302. This is because an incorrect login attempt will still return a status code 200 with an error message will be embedded within the HTML body. Conversely, a successful login will generate a 302 status code, signifying appropriate redirection after the authentication process.
 
 ## Password Encryption
 
