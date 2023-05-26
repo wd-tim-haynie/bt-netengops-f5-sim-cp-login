@@ -1,12 +1,12 @@
 # F5 ClearPass Guest Login Simulation
 
-The `f5-sim-cp-login` script is designed to simulate a guest login to ClearPass Guest with HTTPS, using F5 external monitor shell script and curl. This simulation can be a superior alternative to the standard https monitor proposed in the "Deploying CPPM with F5 BIG-IP Local Traffic Manager (LTM)" tech note, which hasn't been updated since 2014.
+The `f5-sim-cp-login` script simulates a guest login to ClearPass Guest with HTTPS, using the F5 external monitor shell script and curl. This simulation offers a more efficient alternative to the standard HTTPS monitor proposed in the outdated "Deploying CPPM with F5 BIG-IP Local Traffic Manager (LTM)" tech note from 2014.
 
-This script accesses the default login page of the guest application at `/guest/auth_login.php` and performs a guest operator login and logout. This test can identify potential failure points that the standard monitor may not detect, such as corruption of Web Login pages that would still pass a stock HTTPS monitor and even give a code 200.
+The script tests the guest application's default login page at `/guest/auth_login.php` by performing a guest operator login and logout. This provides a more robust monitor than the standard one as it can detect potential issues like corrupted Web Login pages, which might still pass a stock HTTPS monitor and even return an HTTP status code 200.
 
 ## Installation and Update
 
-To install or update the script on any F5 device:
+Follow these steps to install or update the script on an F5 device:
 
 1. Login to the F5 User Interface (UI).
 2. Navigate to `System > File Management > External Monitor Program File List`.
@@ -14,13 +14,14 @@ To install or update the script on any F5 device:
 
 To create a monitor object:
 
-- On an LTM device, navigate to Local Traffic > Monitors > Create. Fill in the name and description, and select 'External' as the type.
-- On a GTM (BigIP DNS) device, navigate to DNS > GSLB > Monitors > Create. Fill in the name and description, and select 'External' as the type.
-- As a best practice, consider including a link to this GitHub repository in the description field of the monitor. This facilitates future reference and updates, particularly since the operational details of this script aren't documented elsewhere.
+- On an LTM device, go to Local Traffic > Monitors > Create. Fill in the name and description fields, and select 'External' as the type.
+- On a GTM (BigIP DNS) device, go to DNS > GSLB > Monitors > Create. Fill in the name and description fields, and select 'External' as the type.
 
-Now, add USERNAME and PASSWORD variables. In the Variables section of the monitor configuration, set USERNAME to your test username and click 'Add', then set PASSWORD to your test password and click 'Add' again. Initially, the plaintext PASSWORD variable can be set for a quick setup. However, once the monitor is operational, it's recommended to switch to an encrypted password (refer to the Password Encryption section).
+Consider including a link to this GitHub repository in the description field of the monitor to facilitate future references and updates, especially since the operational details of this script aren't documented elsewhere.
 
-To finalize the configuration of your monitor object, click 'Finished'.
+Then, add USERNAME and PASSWORD variables. In the Variables section of the monitor configuration, set USERNAME to your test username and click 'Add'. Then set PASSWORD to your test password and click 'Add' again. For a quick setup, you can initially use the plaintext PASSWORD variable. However, it's recommended to switch to an encrypted password once the monitor is operational (refer to the Password Encryption section).
+
+Finally, click 'Finished' to complete the configuration of your monitor object.
 
 ## Script Variables
 
@@ -44,15 +45,6 @@ The script checks for HTTP status code 302 intentionally, as an invalid username
 
 On the ClearPass side, configure your guest operator login policy to map the test username to the default "Null Profile". This allows login but assigns no privileges. The test username/password can be configured in the local user database, or an external resource like Active Directory if desired.
 
-## Version History
-
-- **1.3**: Simplified and improved logging, enhanced error handling, added password encryption, and fixed minor bugs.
-- **1.2.1**: Moved MIN_LOG_LEVEL and LOGGING variables to be configured by the monitor. Enabled logging by setting LOGGING to true or specifying a valid MIN_LOG_LEVEL.
-- **1.2**: Added password encryption and improved PID management, error detection, and cleanup.
-- **1.1**: Initial published version with cleartext passwords and limited logging.
-
-Please find details on password encryption and decryption in the subsequent sections.
-
 ## Password Decryption Key File
 
 Only the first line of this file is read as the decryption key; all subsequent lines are disregarded. 
@@ -75,6 +67,36 @@ Please refer to the ClearPass F5 Tech Note here: https://www.arubanetworks.com/t
 
 The project has been tested on ClearPass 6.9.13 and BigIP 14.1.4.6.
 
+Your updated troubleshooting section provides some more helpful details. Here's a refined version:
+
+# Troubleshooting
+
+In case you encounter issues while running the script, refer to the following troubleshooting steps:
+
+1. **Check Login Credentials:** Ensure your username and password can successfully log into `/guest/auth_login.php` from a web browser. Use the Access Tracker in ClearPass to confirm a successful login status.
+2. **Open Log:** Log into the F5 bash shell and execute the command `tail -f /var/log/ltm`. Keep this window open for further troubleshooting.
+3. **Set Debug Level:** In the monitor configuration, set the `LOG_LEVEL` variable to `debug`.
+4. **Configure Password:** Remove the `ENCRYPTED_PASSWORD` variable and set the `PASSWORD` variable to your plaintext password.
+5. **Check Log for Errors:** With the log still open, verify if the script functions as expected with the plaintext password. Any errors or issues will be logged here.
+6. **Verify ClearPass Access Tracker:** Check the ClearPass Access Tracker to confirm if it's receiving the request from the test username and verify its response.
+7. **Test Encrypted Password:** Once the script functions correctly with the plaintext password, retry with the encrypted password. Ensure `DECRYPTION_KEY_FILE_NAME` is correctly set to the appropriate file. If necessary, uncomment the following lines in your script for additional debugging:
+        `#LOG_MESSAGE "Decryption Key: $DECRYPTION_KEY" "debug"`
+        `#LOG_MESSAGE "Decrypted Password: $PASSWORD" "debug"`
+   Remember that this could potentially expose sensitive information in your logs, especially if they're transmitted in cleartext to a syslog server. To avoid this risk, consider redirecting these messages to a separate output file by uncommenting these lines and replacing `/path/to/outputfile` with a valid path:
+        `#echo "Decryption Key: $DECRYPTION_KEY" >> /path/to/outputfile`
+        `#echo "Decrypted Password: $PASSWORD" >> /path/to/outputfile`
+   Ensure to securely delete this output file once you're done with debugging.
+8. **Unset Debug Level:** Once everything functions as expected, delete the `LOG_LEVEL` variable to stop the verbose logging and return it to the default level. Also, remember to re-comment any lines that were uncommented during the debugging process in step 7 to maintain the security of your environment and prevent potentially sensitive information from being logged.
+
+## Version History
+
+- **1.3**: Simplified and improved logging, enhanced error handling, added password encryption, and fixed minor bugs.
+- **1.2.1**: Moved MIN_LOG_LEVEL and LOGGING variables to be configured by the monitor. Enabled logging by setting LOGGING to true or specifying a valid MIN_LOG_LEVEL.
+- **1.2**: Added password encryption and improved PID management, error detection, and cleanup.
+- **1.1**: Initial published version with cleartext passwords and limited logging.
+
+Please find details on password encryption and decryption in the subsequent sections.
+
 ## Disclaimer
 
 This script is provided for the purpose of testing and troubleshooting, and is intended to be used in a responsible manner. It is not designed for, and should not be used for, unauthorized access to any systems. While efforts have been made to ensure its accuracy and reliability, the author assumes no responsibility for any issues or complications that may arise from the use of this script within your environment. Users are advised to carefully evaluate the script's applicability to their specific needs and to take appropriate precautions in its usage.
@@ -86,3 +108,11 @@ This project is licensed under the MIT License. See the LICENSE file for more de
 ## Authors
 
 Tim Haynie, CWNE #254, ACMX #508 [LinkedIn Profile](https://www.linkedin.com/in/timhaynie/)
+
+
+
+
+
+
+
+
