@@ -45,18 +45,19 @@ The script checks for HTTP status code 302 intentionally, as an invalid username
 
 On the ClearPass side, configure your guest operator login policy to map the test username to the default "Null Profile". This allows login but assigns no privileges. The test username/password can be configured in the local user database, or an external resource like Active Directory if desired.
 
-## Password Decryption Key File
-
-Only the first line of this file is read as the decryption key; all subsequent lines are disregarded. 
-
-It's essential to upload this iFile to EVERY device - remember, GTMs don't automatically sync this information. If you have LTMs that are part of a sync group, they will synchronize this iFile among themselves.
-
 ## Password Encryption
 
 1. Generate a secure, random 32-character (or longer) decryption key. Save this key in a text file temporarily.
 2. Import this file into your LTMs and GTMs as an iFile via `System > File Management > iFile List`.
 3. Run this command to encrypt your password: `echo 'your-password' | openssl enc -aes-256-cbc -base64 -k 'your-decryption-key'`
 4. Save the encrypted password as a variable in the monitor with the name `ENCRYPTED_PASSWORD`.
+
+## Password Decryption Key File
+
+Only the first line of this file is read as the decryption key; all subsequent lines are disregarded. 
+
+It's essential to upload this iFile to EVERY device - remember, GTMs don't automatically sync this information. If you have LTMs that are part of a sync group, they will synchronize this iFile among themselves.
+
 
 ## Limitations
 
@@ -68,6 +69,13 @@ Please refer to the ClearPass F5 Tech Note here: https://www.arubanetworks.com/t
 The project has been tested on ClearPass 6.9.13 and BigIP 14.1.4.6.
 
 Your updated troubleshooting section provides some more helpful details. Here's a refined version:
+
+## Version History
+
+- **1.3**: Simplified and improved logging, enhanced error handling, added the ability to specify any decryption key file, and fixed minor bugs.
+- **1.2.1**: Moved MIN_LOG_LEVEL and LOGGING variables to be configured by the monitor. Enabled logging by setting LOGGING to true or specifying a valid MIN_LOG_LEVEL.
+- **1.2**: Added password encryption and improved PID management, error detection, and cleanup.
+- **1.1**: Initial published version with cleartext passwords and limited logging.
 
 # Troubleshooting
 
@@ -88,31 +96,23 @@ In case you encounter issues while running the script, refer to the following tr
    Ensure to securely delete this output file once you're done with debugging.
 8. **Unset Debug Level:** Once everything functions as expected, delete the `LOG_LEVEL` variable to stop the verbose logging and return it to the default level. Also, remember to re-comment any lines that were uncommented during the debugging process in step 7 to maintain the security of your environment and prevent potentially sensitive information from being logged.
 
-## Version History
+## About
 
-- **1.3**: Simplified and improved logging, enhanced error handling, added password encryption, and fixed minor bugs.
+### Version History
+
+- **1.3**: Simplified and improved logging, enhanced error handling, added the ability to specify any decryption key file, and fixed minor bugs.
 - **1.2.1**: Moved MIN_LOG_LEVEL and LOGGING variables to be configured by the monitor. Enabled logging by setting LOGGING to true or specifying a valid MIN_LOG_LEVEL.
 - **1.2**: Added password encryption and improved PID management, error detection, and cleanup.
 - **1.1**: Initial published version with cleartext passwords and limited logging.
 
-Please find details on password encryption and decryption in the subsequent sections.
-
-## Disclaimer
+### Disclaimer
 
 This script is provided for the purpose of testing and troubleshooting, and is intended to be used in a responsible manner. It is not designed for, and should not be used for, unauthorized access to any systems. While efforts have been made to ensure its accuracy and reliability, the author assumes no responsibility for any issues or complications that may arise from the use of this script within your environment. Users are advised to carefully evaluate the script's applicability to their specific needs and to take appropriate precautions in its usage.
 
-## License
+### License
 
 This project is licensed under the MIT License. See the LICENSE file for more details.
 
-## Authors
+### Author
 
 Tim Haynie, CWNE #254, ACMX #508 [LinkedIn Profile](https://www.linkedin.com/in/timhaynie/)
-
-
-
-
-
-
-
-
