@@ -62,14 +62,8 @@ It's essential to upload this iFile to EVERY device - remember, GTMs don't autom
 ## Limitations
 
 1. When you upload a file as an iFile, the BIG-IP will append some numeric identifier, which isn't predictable. To avoid accidentally matching the wrong file, ensure you're using a unique file name for the decryption key file.
-2. If you want to monitor the same resource in multiple locations (e.g., at the node and in the pool), create a separate monitor (with a different name) for each. Using the same monitor could unintentionally kill the process because the same pid file is used.
-
-Please refer to the ClearPass F5 Tech Note here: https://www.arubanetworks.com/techdocs/ArubaDocPortal/content/cp-resources/cp-tech-notes.htm (Click the link for F5 Load Balancers)
-
-The project has been tested on ClearPass 6.9.13 and BigIP 14.1.4.6.
-
-Your updated troubleshooting section provides some more helpful details. Here's a refined version:
-
+2. If you want to monitor the same resource in multiple locations (e.g., in two different pools), create a separate monitor (with a unique name) for each location. Using the same monitor for the same resource in different locations could unintentionally cause the scripts to interfere with each other due to the shared usage of the same process ID (pid) file.
+    
 ## Troubleshooting
 
 In case you encounter issues while running the script, refer to the following troubleshooting steps:
@@ -90,6 +84,10 @@ In case you encounter issues while running the script, refer to the following tr
 8. **Unset Debug Level:** Once everything functions as expected, delete the `LOG_LEVEL` variable to stop the verbose logging and return it to the default level. Also, remember to re-comment any lines that were uncommented during the debugging process in step 7 to maintain the security of your environment and prevent potentially sensitive information from being logged.
 
 ## About
+
+Please refer to the ClearPass F5 Tech Note here: https://www.arubanetworks.com/techdocs/ArubaDocPortal/content/cp-resources/cp-tech-notes.htm (Click the link for F5 Load Balancers)
+
+The project has been tested on ClearPass 6.9.13 and BigIP 14.1.4.6.
 
 ### Version History
 
