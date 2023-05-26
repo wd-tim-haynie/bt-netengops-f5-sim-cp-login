@@ -70,14 +70,7 @@ The project has been tested on ClearPass 6.9.13 and BigIP 14.1.4.6.
 
 Your updated troubleshooting section provides some more helpful details. Here's a refined version:
 
-## Version History
-
-- **1.3**: Simplified and improved logging, enhanced error handling, added the ability to specify any decryption key file, and fixed minor bugs.
-- **1.2.1**: Moved MIN_LOG_LEVEL and LOGGING variables to be configured by the monitor. Enabled logging by setting LOGGING to true or specifying a valid MIN_LOG_LEVEL.
-- **1.2**: Added password encryption and improved PID management, error detection, and cleanup.
-- **1.1**: Initial published version with cleartext passwords and limited logging.
-
-# Troubleshooting
+## Troubleshooting
 
 In case you encounter issues while running the script, refer to the following troubleshooting steps:
 
