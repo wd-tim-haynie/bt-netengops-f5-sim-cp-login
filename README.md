@@ -52,7 +52,7 @@ On the ClearPass side, configure your guest operator login policy to map the tes
 3. Run this command to encrypt your password: `echo 'your-password' | openssl enc -aes-256-cbc -base64 -k 'your-decryption-key'`
 4. Save the encrypted password as a variable in the monitor with the name `ENCRYPTED_PASSWORD`.
 
-## Password Decryption Key File
+### Password Decryption Key File
 
 Only the first line of this file is read as the decryption key; all subsequent lines are disregarded. 
 
