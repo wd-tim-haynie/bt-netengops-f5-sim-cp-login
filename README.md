@@ -1,6 +1,6 @@
 # F5 ClearPass Guest Login Simulation
 
-The `f5-sim-cp-login` script simulates a guest login to ClearPass Guest with HTTPS, using the F5 external monitor shell script and curl. This simulation offers a more efficient alternative to the standard HTTPS monitor proposed in the outdated "Deploying CPPM with F5 BIG-IP Local Traffic Manager (LTM)" tech note from 2014.
+The `f5-sim-cp-login` script simulates a guest login to ClearPass Guest with HTTPS, using the F5 external monitor shell script and curl. This simulation offers a more robust alternative to the standard HTTPS monitor proposed in the outdated "Deploying CPPM with F5 BIG-IP Local Traffic Manager (LTM)" tech note from 2014.
 
 The script tests the guest application's default login page at `/guest/auth_login.php` by performing a guest operator login and logout. This provides a more robust monitor than the standard one as it can detect potential issues like corrupted Web Login pages, which might still pass a stock HTTPS monitor and even return an HTTP status code 200.
 
