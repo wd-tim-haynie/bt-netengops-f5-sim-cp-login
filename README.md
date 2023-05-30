@@ -94,7 +94,10 @@ In case you encounter issues while running the script, refer to the following tr
 
 Please refer to the ClearPass F5 Tech Note here: https://www.arubanetworks.com/techdocs/ArubaDocPortal/content/cp-resources/cp-tech-notes.htm (Click the link for F5 Load Balancers)
 
-The project has been tested on ClearPass 6.9.13 and BigIP 14.1.4.6.
+The project has been tested on:
+* ClearPass 6.9.13
+* BigIP 14.1.4.6
+* BigIP 14.1.5.4
 
 ### Version History
 
