@@ -55,10 +55,13 @@ The script is designed to intentionally check for an HTTP status code 302. This 
 
 ## Password Encryption
 
-1. Generate a secure, random 32-character (or longer) decryption key. Save this key in a text file temporarily.
-2. Import this file into your LTMs and GTMs as an iFile via `System > File Management > iFile List`.
-3. Run this command to encrypt your password: `echo 'your-password' | openssl enc -aes-256-cbc -base64 -k 'your-decryption-key'`
-4. Save the encrypted password as a variable in the monitor with the name `ENCRYPTED_PASSWORD`.
+1. Begin by generating a secure, random decryption key with at least 32 characters. Temporarily save this key in a text file.
+2. Import the text file containing your decryption key into your LTMs and GTMs using the `System > File Management > iFile List` function.
+3. Use the following command to encrypt your password: `echo 'your-password' | openssl enc -aes-256-cbc -base64 -k 'your-decryption-key'`.
+4. Within your monitor, define a variable named `DECRYPTION_KEY_FILE_NAME` and assign the name of the iFile as its value. It's important to choose a highly unique file name, as discussed in the **Limitations** section of this document.
+5. Similarly, in the monitor, define another variable called `ENCRYPTED_PASSWORD` and assign the output from Step 3 as its value.
+6. After you've made these changes to the monitor, remember to save your updates to the monitor using the "Finished" or "Update" button.
+7. Ensure you delete the key file from any non-F5 systems once you've completed these steps.
 
 ### Password Decryption Key File
 
