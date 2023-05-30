@@ -41,9 +41,9 @@ There is no need to encode special characters with URL encoding (e.g., '%21' for
 
 ## Script Arguments
 
-If you wish to monitor other pages on the ClearPass appliance, you can add their URIs as arguments in the monitor. For instance, you could effectively monitor the ClearPass admin server service (cpass-admin-server) by adding `/tips/welcome.action` as an argument. It's also best practice to monitor any critical pages involved in your captive portal login process. 
+If you wish to monitor other pages on the ClearPass appliance, you can add their URIs as arguments in the monitor. For instance, you could effectively monitor the ClearPass admin server service (cpass-admin-server) by adding `/tips/welcome.action` as an argument.
 
-For monitoring captive portal pages in the ClearPass Guest application, append the URI with `?_browser=1`. This query parameter simulates the behavior of a real browser. Failing to include it may result in a different status code than expected.
+It's also best practice to monitor any critical pages involved in your captive portal login process. For monitoring captive portal pages in the ClearPass Guest application, append the URI with `?_browser=1`. This query parameter simulates the behavior of a real browser. Failing to include it may result in a different status code than expected.
 
 For example, you could add `/tips/welcome.action /guest/mycaptiveportallanding.php?_browser=1` as arguments to the script, which will then monitor these two pages.
 
