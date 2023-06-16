@@ -9,8 +9,11 @@ Notably, it enables the detection of potential issues such as corrupted Web Logi
 Follow these steps to install or update the script on an F5 device:
 
 1. Login to the F5 User Interface (UI).
-2. Navigate to `System > File Management > External Monitor Program File List`.
-3. Click `Import`.
+2. Navigate to `System > File Management > External Monitor Program File List > Import`.
+3. Click the `Browse` button and select the script file.
+4. Select either `Create New` or `Overwrite Existing`.
+5. Type a name for the script in the `Name` field, for example: `sim_cp_login.sh`.
+6. Click `Import` to complete.
 
 To create a monitor object:
 
