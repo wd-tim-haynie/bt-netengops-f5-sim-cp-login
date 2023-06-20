@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #sim-cp-login.sh
-#Version 1.4 May 25, 2023
+#Version 1.5 June 20, 2023
 #https://github.com/wd-tim-haynie/bt-netengops-f5-sim-cp-login
 #Author: Tim Haynie, CWNE #254, ACMX #508 https://www.linkedin.com/in/timhaynie/
 
@@ -21,7 +21,7 @@ PORT=${2}  # The port number is the second argument
 
 # Logging section
 # Logging level hierarchy (in order of severity)
-declare -A ALL_LOG_LEVELS=( ["debug"]=0 ["info"]=1 ["notice"]=2 ["warning"]=3 ["err"]=4 ["crit"]=5 ["alert"]=6 ["emerg"]=7 )
+declare -A ALL_LOG_LEVELS=( ["debug"]=0 ["info"]=1 ["notice"]=2 ["warn"]=3 ["err"]=4 ["crit"]=5 ["alert"]=6 ["emerg"]=7 )
 ALL_LOG_LEVELS_STR=$(echo ${!ALL_LOG_LEVELS[@]})
 
 LOG_MESSAGE() {
@@ -36,7 +36,7 @@ LOG_MESSAGE() {
         fi
     else
         # Log level is invalid, log a warning
-        LOG_MESSAGE "Invalid log level \"$2\" for provided log. Valid levels are: $ALL_LOG_LEVELS_STR. Message: $1" "warning"
+        LOG_MESSAGE "Invalid log level \"$2\" for provided log. Valid levels are: $ALL_LOG_LEVELS_STR. Message: $1" "warn"
     fi
 }
 
@@ -48,8 +48,8 @@ elif [[ -z "${ALL_LOG_LEVELS[$LOG_LEVEL]}" ]]
 then
     # LOG_LEVEL is either null or invalid, disable logging
     PROVIDED_LOG_LEVEL=${LOG_LEVEL}
-    LOG_LEVEL="warning"
-    LOG_MESSAGE "Invalid LOG_LEVEL \"$PROVIDED_LOG_LEVEL\", disabling additional logging" "warning"
+    LOG_LEVEL="warn"
+    LOG_MESSAGE "Invalid LOG_LEVEL \"$PROVIDED_LOG_LEVEL\", disabling additional logging" "warn"
     unset LOG_LEVEL
 fi
 
@@ -100,7 +100,7 @@ COOKIE_FILE="/tmp/$(basename ${MON_TMPL_NAME})_${IP}_${PORT}_$$.cookie"
 PID_FILE="/var/run/$(basename ${MON_TMPL_NAME})_${IP}_${PORT}.pid"
 
 # Cleanup previous cookie if it exists
-rm -f "/tmp/$(basename ${MON_TMPL_NAME}).${IP}_${PORT}_$(cat "$PID_FILE").cookie" > /dev/null 2>&1
+rm -f "/tmp/$(basename ${MON_TMPL_NAME}).${IP}_${PORT}_$(cat "$PID_FILE" 2> /dev/null).cookie" > /dev/null 2>&1
 
 # Cleanup function to ensure removal of temporary files on script exit
 CLEANUP() {
@@ -132,7 +132,7 @@ URI="/guest/auth_login.php"
 URL="${URL_PREFIX}${URI}"
 
 # Get the initial cookie and ntok
-INIT_RESPONSE=$(curl -k -c "$COOKIE_FILE" -s -S "$URL")
+INIT_RESPONSE=$(curl -k -c "$COOKIE_FILE" -s -S "$URL" -H 'Accept-Encoding: identity' -H "Connection: close")
 NTOK=$(echo "$INIT_RESPONSE" | grep -oP 'name="ntok" id="[^"]*" value="\K[^"]*')
 
 # Check if ntok is valid - 40 hex characters
@@ -144,7 +144,7 @@ fi
 
 # Log in with the cookie, ntok, username, and password
 CURL_DATA="target=&ntok=$NTOK&static_u=&no_u=&no_p=&username=$USERNAME&F_password=0&password=$PASSWORD"
-HTTP_CODE=$(curl -k -b "$COOKIE_FILE" -w "%{http_code}" -d $CURL_DATA "$URL" -s -S -o /dev/null)
+HTTP_CODE=$(curl -k -b "$COOKIE_FILE" -w "%{http_code}" -d $CURL_DATA "$URL" -s -S -H 'Accept-Encoding: identity' -H "Connection: close" -o /dev/null)
 
 # A function to check any URIs passed as arguments from the monitor
 CHECK_URIS() {
@@ -155,7 +155,7 @@ CHECK_URIS() {
         URL="${URL_PREFIX}${URI}"
 
         # Run a curl command to the URI and save the HTTP code and body
-        CURL_OUTPUT=$(curl -k -b "$COOKIE_FILE" -i -s -S "$URL")
+        CURL_OUTPUT=$(curl -k -i -s -S "$URL" -H 'Accept-Encoding: identity' -H "Connection: close")
 
         # Extract the HTTP status code and body
         HTTP_CODE=$(echo "$CURL_OUTPUT" | grep HTTP | awk '{print $2}' | tail -n 1)
@@ -186,12 +186,12 @@ if [[ $HTTP_CODE -eq 302 ]]
 then
     URI="/guest/auth_logout.php"
     URL="${URL_PREFIX}${URI}"
-    HTTP_CODE=$(curl -k -b "$COOKIE_FILE" -w "%{http_code}" "$URL" -s -S -o /dev/null)
+    HTTP_CODE=$(curl -k -b "$COOKIE_FILE" -w "%{http_code}" "$URL" -s -S -H 'Accept-Encoding: identity' -H "Connection: close" -o /dev/null)
 
     # Warn if logout fails, but don't quit
     if ! [[ $HTTP_CODE -eq 302 ]]
     then
-        LOG_MESSAGE "Failed to logout" "warning"
+        LOG_MESSAGE "Failed to logout" "warn"
     fi
 
     # Call the new function to check URIs passed as arguments
