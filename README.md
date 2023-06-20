@@ -107,6 +107,7 @@ The project has been tested on:
 
 ### Version History
 
+- **1.5**: Minor efficiency improvements, no new features. 
 - **1.4**: Added the capability to monitor any page, using arguments passed from the monitor.
 - **1.3**: Simplified and improved logging, enhanced error handling, added the ability to specify any decryption key file, and fixed minor bugs.
 - **1.2.1**: Moved MIN_LOG_LEVEL and LOGGING variables to be configured by the monitor. Enabled logging by setting LOGGING to true or specifying a valid MIN_LOG_LEVEL.
