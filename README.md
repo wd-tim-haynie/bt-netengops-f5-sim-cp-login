@@ -22,7 +22,7 @@ To create a monitor object:
 
 Consider including a link to this GitHub repository in the description field of the monitor to facilitate future references and updates, especially since the operational details of this script aren't documented elsewhere.
 
-Then, add USERNAME and PASSWORD variables. In the Variables section of the monitor configuration, set USERNAME to your test username and click 'Add'. Then set PASSWORD to your test password and click 'Add' again. For a quick setup, you can initially use the plaintext PASSWORD variable. However, it's recommended to switch to an encrypted password once the monitor is operational (refer to the Password Encryption section).
+Then, add `USERNAME` and `PASSWORD` variables. In the Variables section of the monitor configuration, set `USERNAME` to your test username and click 'Add'. Then set `PASSWORD` to your test password and click 'Add' again. For a quick setup, you can initially use the plaintext `PASSWORD` variable. However, it's recommended to switch to an encrypted password once the monitor is operational (refer to the Password Encryption section).
 
 Finally, click 'Finished' to complete the configuration of your monitor object.
 
@@ -52,7 +52,7 @@ For example, you could add `/tips/welcome.action /guest/mycaptiveportallanding.p
 
 ## Behavior and Error Detection
 
-The script frequently uses "> /dev/null 2>&1". This is to ensure that the monitor only returns "UP" when the script completes fully. This is due to the behavior of the F5 external monitor, which considers the monitor successful if ANYTHING is output to STDOUT or STDERR.
+The script frequently uses "> /dev/null 2>&1". This is to ensure that the monitor only returns "UP" when the script completes fully. This is due to the behavior of the F5 external monitor, which considers the monitor successful if ANYTHING is output to STDOUT.
 
 The script is designed to intentionally check for an HTTP status code 302. This is because an incorrect login attempt will still return a status code 200 with an error message will be embedded within the HTML body. Conversely, a successful login will generate a 302 status code, signifying appropriate redirection after the authentication process.
 
@@ -82,7 +82,7 @@ It's essential to upload this iFile to EVERY device - remember, GTMs don't autom
 In case you encounter issues while running the script, refer to the following troubleshooting steps:
 
 1. **Check Login Credentials:** Ensure your username and password can successfully log into `/guest/auth_login.php` from a web browser. Use the Access Tracker in ClearPass to confirm a successful login status.
-2. **Open Log:** Log into the F5 bash shell and execute the command `tail -f /var/log/ltm`. Keep this window open for further troubleshooting.
+2. **Open Log:** Log into the F5 bash shell and execute the command `tail -f /var/log/ltm`. Keep this window open while troubleshooting.
 3. **Set Debug Level:** In the monitor configuration, set the `LOG_LEVEL` variable to `debug`.
 4. **Configure Password:** Remove the `ENCRYPTED_PASSWORD` variable and set the `PASSWORD` variable to your plaintext password.
 5. **Check Log for Errors:** With the log still open, verify if the script functions as expected with the plaintext password. Any errors or issues will be logged here.
@@ -93,7 +93,7 @@ In case you encounter issues while running the script, refer to the following tr
    Remember that this could potentially expose sensitive information in your logs, especially if they're transmitted in cleartext to a syslog server. To avoid this risk, consider redirecting these messages to a separate output file by uncommenting these lines and replacing `/path/to/outputfile` with a valid path:
         `#echo "Decryption Key: $DECRYPTION_KEY" >> /path/to/outputfile`
         `#echo "Decrypted Password: $PASSWORD" >> /path/to/outputfile`
-   Ensure to securely delete this output file once you're done with debugging.
+   Ensure to securely delete this output file once you're done with debugging and to comment out the two log messages above.
 8. **Unset Debug Level:** Once everything functions as expected, delete the `LOG_LEVEL` variable to stop the verbose logging and return it to the default level. Also, remember to re-comment any lines that were uncommented during the debugging process in step 7 to maintain the security of your environment and prevent potentially sensitive information from being logged.
 
 ## About
@@ -109,8 +109,8 @@ The project has been tested on:
 
 - **1.5**: Minor efficiency improvements, no new features. 
 - **1.4**: Added the capability to monitor any page, using arguments passed from the monitor.
-- **1.3**: Simplified and improved logging, enhanced error handling, added the ability to specify any decryption key file, and fixed minor bugs.
-- **1.2.1**: Moved MIN_LOG_LEVEL and LOGGING variables to be configured by the monitor. Enabled logging by setting LOGGING to true or specifying a valid MIN_LOG_LEVEL.
+- **1.3**: Simplified and improved logging, enhanced error handling, added the ability to specify any decryption key file, and fixed minor bugs. Deprecated `MIN_LOG_LEVEL` and `LOGGING` variables, replaced with `LOG_LEVEL`
+- **1.2.1**: Moved `MIN_LOG_LEVEL` and `LOGGING` variables to be configured by the monitor. Enabled logging by setting `LOGGING` to true or specifying a valid `MIN_LOG_LEVEL`.
 - **1.2**: Added password encryption and improved PID management, error detection, and cleanup.
 - **1.1**: Initial published version with cleartext passwords and limited logging.
 
