@@ -76,7 +76,22 @@ It's essential to upload this iFile to EVERY device - remember, GTMs don't autom
 
 1. When you upload a file as an iFile, the BIG-IP will append some numeric identifier, which isn't predictable. To avoid accidentally matching the wrong file, ensure you're using a unique file name for the decryption key file.
 2. If you want to monitor the same resource in multiple locations (e.g., in two different pools), create a separate monitor (with a unique name) for each location. Using the same monitor for the same resource in different locations could unintentionally cause the scripts to interfere with each other due to the shared usage of the same process ID (pid) file.
-    
+
+## Post Deployment Monitoring
+
+It is critical to understand that this is a resource intensive monitor on ClearPass. By default, it involves 2 GETs and 1 POST, and each additional URI monitored is an additional GET. Additionally, the BIG-IP architecture is such that monitors are run independantly on each BIG-IP, rather that from just the active LTM, which in effect incrementally multiplies the monitoring interval for each F5 that is running this monitor. ClearPass has a limited number of threads and resources that it can allocate HTTP. Therefore, it is critical make sure that you are not overloading your ClearPass infrastructure when you utilize this monitor.
+
+Consequences of an overloaded ClearPass can be as mild as the subscriber coming out of sync or as severe as the replication service on the publisher being impacted by an overwhelmed subscriber. If the latter happens, the publisher replication service can crash and cause the entire cluster to fall out of sync until it auto-recovers, which could take 15 minutes or more until everything comes back into sync. Meanwhile, new guest devices cannot registerand new Onboard users cannot onboard, as well as any other consequence that could potentially arise from an out of sync infrastructure.
+
+When deploying this script, monitor the following conditions:
+* User CPU on each node (should not be pegged)
+* Sync status of each node (should not fall out of sync regularly)
+* Status of the DB replication service (aka cpass-replication service on CLI) on the publisher (should not be stopped)
+
+If you find a particular node to be particularly problematic with sync issues or CPU after deploying this script, you need to tune down the monitor interval on the LTM. Sometimes, rebooting the affected node might be required.
+
+If the DB replication service is stopped on the publisher or any other node, it will eventually auto-restart, or you can restart it immediately at the CLI with `service restart cpass-replication`. Note that `restart` should be used instead of `start`.
+
 ## Troubleshooting
 
 In case you encounter issues while running the script, refer to the following troubleshooting steps:
